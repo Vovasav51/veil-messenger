@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Veil: template for `xcodebuild -exportArchive -exportOptionsPlist`.
+
+  This file contains PLACEHOLDERS only. Never commit a filled-in copy: the
+  values describe your Apple Developer account and your signing assets.
+
+  Usage (local Mac):
+    1. Copy to build/ExportOptions.plist (build/ is git-ignored).
+    2. Replace YOURTEAMID, com.example.veil and the profile name.
+    3. VEIL_EXPORT_OPTIONS=build/ExportOptions.plist \
+       VEIL_APPLE_TEAM_ID=YOURTEAMID VEIL_BUNDLE_ID=com.example.veil \
+       bash scripts/ios-build.sh export
+
+  CI generates its own ExportOptions.plist inside the ephemeral keychain
+  workspace (scripts/ios-ci-sign.sh); it never reads a committed one.
+
+  "method" values and what they need:
+    development  registered devices + a development/ad-hoc profile
+    ad-hoc       registered devices + an ad-hoc distribution profile
+    app-store    no device list, App Store Connect app record (TestFlight/App Store)
+    enterprise   ProvisionsAllDevices (Apple Developer Enterprise Program only)
+-->
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>development</string>
+
+    <key>destination</key>
+    <string>export</string>
+
+    <!-- Manual signing: the certificate and profile are already installed and
+         pinned. Automatic signing on CI requires an App Store Connect API key. -->
+    <key>signingStyle</key>
+    <string>manual</string>
+
+    <key>signingCertificate</key>
+    <string>Apple Distribution</string>
+
+    <key>teamID</key>
+    <string>YOURTEAMID</string>
+
+    <!-- bundle id -> provisioning profile NAME (not the UUID) -->
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.example.veil</key>
+        <string>YOUR_PROFILE_NAME</string>
+    </dict>
+
+    <key>stripSwiftSymbols</key>
+    <true/>
+
+    <!-- For method=app-store only: keep the build number from the archive and
+         upload dSYMs. Both are ignored for development/ad-hoc/enterprise. -->
+    <!--
+    <key>uploadSymbols</key>
+    <true/>
+    <key>manageAppVersionAndBuildNumber</key>
+    <false/>
+    -->
+
+    <!-- Bitcode was deprecated in Xcode 14; do not add compileBitcode. -->
+</dict>
+</plist>

@@ -1,0 +1,124 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'io.veil.messenger'
+    compileSdk 35
+    buildToolsVersion '35.0.0'
+
+    defaultConfig {
+        applicationId 'io.veil.messenger'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+        // One device per account: no multi-device, no phone number, no push.
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes {
+        debug {
+            // Local development only. Cleartext is still limited to loopback
+            // and the emulator host alias by UrlPolicy and by the debug
+            // network security config.
+            applicationIdSuffix ''
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        // libsignal's AAR requires core library desugaring (java.time,
+        // java.util.Optional, java.nio.file helpers on older API levels).
+        coreLibraryDesugaringEnabled true
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    sourceSets {
+        main.assets.srcDir(rootProject.file('../licenses'))
+    }
+
+    packaging {
+        resources {
+            // libsignal-client is a desktop JVM jar that the Android AAR uses
+            // only for its Kotlin/Java classes. Its bundled desktop natives
+            // must never enter the APK: the Android .so files come from the
+            // AAR's jni/ directory.
+            excludes += [
+                    'libsignal_jni_*.so',
+                    'libsignal_jni_*.dylib',
+                    'signal_jni_*.dll',
+                    'META-INF/*.kotlin_module',
+                    'META-INF/versions/9/OSGI-INF/MANIFEST.MF',
+            ]
+        }
+        jniLibs {
+            // Compress the large libsignal .so files inside the APK (the system
+            // extracts them into app-private storage at install time). Keeps all
+            // four ABIs, so any device/emulator works.
+            useLegacyPackaging = true
+            // The AAR ships libsignal_jni_testing.so next to the production
+            // library. libsignal loads the testing library first when present,
+            // so it must be removed from production APKs.
+            excludes += ['**/libsignal_jni_testing.so']
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = false
+            returnDefaultValues = false
+        }
+    }
+
+    lint {
+        // Debug lint is part of the build gate; release lint stays off because
+        // it is not shipped from this task.
+        abortOnError true
+        checkReleaseBuilds false
+    }
+}
+
+// The host keeps /tmp on a noexec mount, and libsignal's JNI loader extracts
+// its .so into java.io.tmpdir before System.load(). Point the unit-test JVM at
+// a build-local, executable directory so crypto tests work on Linux.
+tasks.withType(Test).configureEach {
+    def jniTmpDir = layout.buildDirectory.dir("jni-tmp")
+    doFirst {
+        jniTmpDir.get().asFile.mkdirs()
+    }
+    systemProperty 'java.io.tmpdir', jniTmpDir.get().asFile.absolutePath
+    systemProperty 'jna.tmpdir', jniTmpDir.get().asFile.absolutePath
+}
+
+dependencies {
+    // Pinned official Signal Protocol implementation (published on Maven Central).
+    // libsignal-android provides the Android JNI libraries; its POM brings in
+    // libsignal-client (the Java/Kotlin API classes).
+    implementation 'org.signal:libsignal-android:0.106.0'
+
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    // Manifest explicitly customizes this provider to disable downloadable emoji fonts.
+    implementation 'androidx.startup:startup-runtime:1.2.0'
+    implementation 'com.google.android.material:material:1.12.0'
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.3'
+
+    testImplementation 'junit:junit:4.13.2'
+    // Android's org.json is only a stub on the unit-test JVM, so the real
+    // implementation must be on the test classpath.
+    testImplementation 'org.json:json:20240303'
+    // Same pinned libsignal build, resolved as a desktop jar so that unit
+    // tests can load the Linux x86_64 JNI library (libsignal_jni_amd64.so is
+    // bundled inside this artifact) without an emulator.
+    testImplementation 'org.signal:libsignal-client:0.106.0'
+}

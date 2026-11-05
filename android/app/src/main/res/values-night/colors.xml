@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="veil_primary">#98A2FF</color>
+    <color name="veil_on_primary">#0B0D12</color>
+    <color name="veil_primary_container">#232B5C</color>
+    <color name="veil_on_primary_container">#DDE2FF</color>
+    <color name="veil_accent">#D6B77E</color>
+    <color name="veil_bg">#0B0D12</color>
+    <color name="veil_surface">#12151C</color>
+    <color name="veil_surface_alt">#191D26</color>
+    <color name="veil_text">#ECEEF3</color>
+    <color name="veil_text_muted">#9AA1B2</color>
+    <color name="veil_outline">#262B37</color>
+    <color name="veil_danger">#FFB4AB</color>
+    <color name="veil_bubble_out">#222A4C</color>
+    <color name="veil_bubble_in">#171B24</color>
+    <color name="veil_shield">#12151C</color>
+</resources>

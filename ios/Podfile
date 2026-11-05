@@ -1,0 +1,24 @@
+platform :ios, '17.0'
+use_frameworks!
+
+# Last upstream CocoaPods release (v0.106.0), pinned to an immutable commit.
+# Official Rust FFI archive SHA-256; required by upstream fetch_archive.py.
+ENV['LIBSIGNAL_FFI_PREBUILD_CHECKSUM'] = 'ddfa5ac6fd6e0da9ebe4eb23890af048140aec1a3e916d3eccadc1036627152f'
+
+target 'Veil' do
+  pod 'LibSignalClient', :git => 'https://github.com/signalapp/libsignal.git',
+      :commit => 'fc90b90fa2b9c37822fa47ba0e0dcdf387a0c071'
+
+  target 'VeilTests' do
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
+      config.build_settings['SWIFT_ENABLE_EXPLICIT_MODULES'] = 'NO'
+    end
+  end
+end

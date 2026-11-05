@@ -1,0 +1,11 @@
+Veil development prototype source is provided under the GNU Affero General
+Public License version 3 only (SPDX-License-Identifier: AGPL-3.0-only).
+
+The complete license text is included in licenses/AGPL-3.0.txt.
+
+This program is distributed WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+Third-party dependencies retain their own copyrights and license notices;
+see THIRD_PARTY_NOTICES.md and the pinned upstream releases.

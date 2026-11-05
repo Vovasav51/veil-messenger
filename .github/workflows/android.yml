@@ -1,0 +1,38 @@
+name: Android development APK
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_included_quota:
+        description: 'I checked included Actions quota and spending limits; this job must not incur paid usage'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  build:
+    if: inputs.confirm_included_quota
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Install SDK platform and build tools
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Assemble APK
+        run: bash scripts/android-build.sh debug
+      - name: Unit tests
+        run: bash scripts/android-build.sh test
+      - name: Lint
+        run: bash scripts/android-build.sh lint
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: Veil-Android-development
+          path: dist/Veil-0.1.0-dev.apk

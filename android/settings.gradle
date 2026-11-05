@@ -1,0 +1,27 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        // Official Signal artifact repository. Signal publishes libsignal
+        // Android/JVM builds here (and uses it in Signal-Android itself);
+        // Maven Central lags behind at 0.86.5. Restricted to org.signal so no
+        // other dependency can be resolved from it.
+        maven {
+            name = "SignalBuildArtifacts"
+            url = "https://build-artifacts.signal.org/libraries/maven/"
+            content { includeGroup "org.signal" }
+        }
+        mavenCentral()
+    }
+}
+
+rootProject.name = "Veil"
+include(":app")

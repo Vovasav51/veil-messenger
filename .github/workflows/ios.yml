@@ -1,0 +1,347 @@
+name: iOS (manual, cost-gated)
+
+# MANUAL ONLY on purpose.
+#
+# macOS runner minutes are billed at a 10x multiplier on private repositories.
+# Automatic push/pull_request triggers are disabled so that pushing a commit
+# never spends money without the repository owner's explicit decision.
+#
+# To enable automatic runs later (owner approval), uncomment the push /
+# pull_request block directly below. It is indented as a child of `on:` on
+# purpose: uncommenting is then a valid workflow change, not a stray root key.
+on:
+  # push:
+  #   paths:
+  #     - 'ios/**'
+  #     - 'scripts/ios-build.sh'
+  #     - 'scripts/ios-ci-sign.sh'
+  #     - '.github/workflows/ios.yml'
+  # pull_request:
+  #   paths:
+  #     - 'ios/**'
+  #     - 'scripts/ios-build.sh'
+  #     - 'scripts/ios-ci-sign.sh'
+  #     - '.github/workflows/ios.yml'
+  workflow_dispatch:
+    inputs:
+      confirm_included_quota:
+        description: 'I checked included Actions quota and spending limits; these macOS jobs must not incur paid usage'
+        type: boolean
+        default: false
+      run_simulator:
+        description: 'Compile simulator app and run XCTest (billed macOS minutes)'
+        type: boolean
+        default: true
+      run_device_unsigned:
+        description: 'Compile a device-target archive WITHOUT signing (never installable)'
+        type: boolean
+        default: true
+      run_signed_export:
+        description: 'Build a signed archive and export an IPA (needs Apple secrets, paid team)'
+        type: boolean
+        default: false
+      export_method:
+        description: 'Export method for the signed build'
+        type: choice
+        options:
+          - development
+          - ad-hoc
+          - app-store
+          - enterprise
+        default: development
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: '1'
+  COCOAPODS_DISABLE_STATS: '1'
+  LANG: en_US.UTF-8
+
+jobs:
+  simulator:
+    name: Simulator build + XCTest
+    if: inputs.confirm_included_quota && inputs.run_simulator
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain report
+        run: |
+          set -euo pipefail
+          mkdir -p build/logs
+          {
+            echo "ref: $GITHUB_REF $GITHUB_SHA"
+            sw_vers
+            xcodebuild -version
+            xcode-select -p
+            xcrun simctl list runtimes || true
+          } | tee build/logs/toolchain.log
+
+      - name: Install build tools
+        run: |
+          set -euo pipefail
+          command -v xcodegen >/dev/null || brew install xcodegen
+          command -v pod >/dev/null || brew install cocoapods
+          xcodegen --version
+          pod --version
+
+      - name: Cache CocoaPods and libsignal checkout
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'ios/project.yml') }}-libsignal-0.106.0-fc90b90f
+          restore-keys: |
+            pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'ios/project.yml') }}-
+
+      - name: Build simulator app
+        run: bash scripts/ios-build.sh simulator
+
+      - name: Run XCTest on the simulator
+        run: bash scripts/ios-build.sh test
+
+      - name: Bundle AGPL-3.0 sources and provenance
+        if: always()
+        run: bash scripts/ios-build.sh third-party-sources
+
+      - name: Preserve simulator bundle permissions in an inner ZIP
+        if: success()
+        run: ditto -c -k --sequesterRsrc --keepParent build/DerivedData/Build/Products/Debug-iphonesimulator/Veil.app build/Veil-simulator.app.zip
+
+      - name: Upload simulator app (simulator-only, NOT installable on iPhone)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-simulator-unsigned-app-NOT-INSTALLABLE-ON-IPHONE
+          path: build/Veil-simulator.app.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload XCTest results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-ios-test-results
+          path: build/TestResults-*.xcresult
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload build logs (no secrets are written to them)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-ios-logs-simulator
+          path: build/logs
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload resolved Podfile.lock
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-podfile-lock
+          path: ios/Podfile.lock
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload AGPL-3.0 third-party sources
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-third-party-agpl-sources
+          path: build/veil-third-party-agpl-sources.tar.gz
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Simulator job"
+            echo ""
+            echo "- XCTest: \`build/TestResults-*.xcresult\` (open with \`xcrun xcresulttool\` or Xcode)"
+            echo "- Simulator .app: simulators only, does **not** run on a physical iPhone"
+            echo "- No IPA and no signing assets are produced by this job"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  device-unsigned:
+    name: Device compile validation (unsigned)
+    if: inputs.confirm_included_quota && inputs.run_device_unsigned
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain report
+        run: |
+          set -euo pipefail
+          mkdir -p build/logs
+          { sw_vers; xcodebuild -version; xcode-select -p; } | tee build/logs/toolchain.log
+
+      - name: Install build tools
+        run: |
+          set -euo pipefail
+          command -v xcodegen >/dev/null || brew install xcodegen
+          command -v pod >/dev/null || brew install cocoapods
+
+      - name: Cache CocoaPods and libsignal checkout
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'ios/project.yml') }}-libsignal-0.106.0-fc90b90f
+          restore-keys: |
+            pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'ios/project.yml') }}-
+
+      - name: Compile Release archive for generic iOS device (no signing)
+        run: bash scripts/ios-build.sh device-unsigned
+
+      - name: Refuse to ship a mislabelled or accidentally signed artefact
+        run: |
+          set -euo pipefail
+          ARCHIVE=build/Veil-unsigned.xcarchive
+          APP="$ARCHIVE/Products/Applications/Veil.app"
+          test -d "$APP"
+          test -x "$APP/Veil"
+          if find "$APP" \( -name _CodeSignature -o -name CodeResources -o -name embedded.mobileprovision \) -print | grep -q .; then
+            echo '::error::unsigned archive contains signing material; aborting'
+            exit 1
+          fi
+          lipo -archs "$APP/Veil" | tee build/logs/archs.txt
+          grep -q arm64 build/logs/archs.txt
+          test -f "$ARCHIVE/DO-NOT-INSTALL-UNSIGNED.txt"
+          echo "::notice::Unsigned device compile validated. This artefact is NOT installable."
+
+      - name: Preserve unsigned archive permissions in an inner ZIP
+        if: success()
+        run: ditto -c -k --sequesterRsrc --keepParent build/Veil-unsigned.xcarchive build/Veil-device-unsigned.xcarchive.zip
+
+      - name: Upload unsigned archive (NOT installable)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-device-UNSIGNED-xcarchive-DO-NOT-INSTALL
+          path: |
+            build/Veil-device-unsigned.xcarchive.zip
+            build/logs
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-ios-logs-device-unsigned-failed
+          path: build/logs
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Unsigned device compile"
+            echo ""
+            echo "- Targets \`generic/platform=iOS\` (real device SDK), Release, arm64."
+            echo "- \`CODE_SIGNING_ALLOWED=NO\`: no signature, no profile, **cannot be installed**."
+            echo "- This validates compilation only. It is not an IPA and must not be distributed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  signed-export:
+    name: Signed archive + IPA export
+    # Requires a paid Apple Developer team, an installed distribution
+    # certificate/profile supplied as secrets, and manual approval on the
+    # `ios-signing` environment. Never runs on push.
+    # Required reviewers must be configured in GitHub settings by the owner;
+    # declaring the environment in YAML does not configure approval protection.
+    if: inputs.confirm_included_quota && inputs.run_signed_export
+    runs-on: macos-15
+    timeout-minutes: 60
+    environment: ios-signing
+    env:
+      IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+      IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+      IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+      IOS_EXPORT_METHOD: ${{ inputs.export_method }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preflight secret check (names only, never values)
+        run: |
+          set -euo pipefail
+          missing=""
+          for name in IOS_CERT_P12_BASE64 IOS_CERT_PASSWORD IOS_PROVISIONING_PROFILE_BASE64 IOS_TEAM_ID IOS_BUNDLE_ID; do
+            # eval instead of ${!name}: the runner's /bin/bash is 3.2
+            eval "current=\"\${$name:-}\""
+            if [ -z "$current" ]; then missing="$missing $name"; fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::missing secrets:$missing"
+            echo "Configure them on the 'ios-signing' environment. See docs/IOS_BUILD.md."
+            exit 1
+          fi
+          mkdir -p build/logs
+          echo "all required signing secrets are present (values not printed)" | tee build/logs/preflight.log
+
+      - name: Install build tools
+        run: |
+          set -euo pipefail
+          command -v xcodegen >/dev/null || brew install xcodegen
+          command -v pod >/dev/null || brew install cocoapods
+
+      - name: Cache CocoaPods and libsignal checkout
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+            ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'ios/project.yml') }}-libsignal-0.106.0-fc90b90f
+          restore-keys: |
+            pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'ios/project.yml') }}-
+
+      - name: Signed archive and export (ephemeral keychain)
+        run: bash scripts/ios-ci-sign.sh
+
+      - name: Upload signed IPA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-signed-ipa-${{ inputs.export_method }}
+          path: |
+            build/export/*.ipa
+            build/export/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload signing logs (no secret values)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veil-ios-logs-signed
+          path: build/logs
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Signed export (${{ inputs.export_method }})"
+            echo ""
+            echo "- Certificate and profile were imported into a throw-away keychain and deleted afterwards."
+            echo "- The IPA is signed and installable only for the devices/accounts allowed by that profile."
+            echo "- Verification performed: team id, bundle id, application-identifier, profile expiry, \`codesign --verify\`."
+          } >> "$GITHUB_STEP_SUMMARY"

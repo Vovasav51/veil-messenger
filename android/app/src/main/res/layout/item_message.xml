@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="3dp">
+
+    <LinearLayout
+        android:id="@+id/bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bubble_in"
+        android:orientation="vertical"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="9dp">
+
+        <TextView
+            android:id="@+id/body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="286dp"
+            android:textAppearance="@style/TextAppearance.Veil.Body"
+            android:textColor="@color/veil_text"
+            android:textIsSelectable="true"
+            tools:text="Текст повідомлення" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/meta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textAppearance="@style/TextAppearance.Veil.Body"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="11sp"
+        tools:text="12:40" />
+</LinearLayout>

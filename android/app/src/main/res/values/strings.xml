@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Veil</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_tagline">Приватний текстовий зв\'язок</string>
+    <string name="onboarding_intro">Один пристрій на акаунт. Без номера телефону, без відновлення акаунта. Ключі створюються на цьому пристрої й ніколи його не залишають.</string>
+    <string name="onboarding_server_label">Адреса релею</string>
+    <string name="onboarding_server_hint">https://relay.example.org</string>
+    <string name="onboarding_handle_label">Псевдонім</string>
+    <string name="onboarding_handle_hint">наприклад, olena_k</string>
+    <string name="onboarding_handle_helper">3–24 символи: a–z, 0–9 та «_». Символ @ на початку необов\'язковий.</string>
+    <string name="onboarding_create">Створити акаунт</string>
+    <string name="onboarding_retry">Продовжити реєстрацію</string>
+    <string name="onboarding_pending_title">Реєстрація не завершена</string>
+    <string name="onboarding_pending_body">UID цього пристрою вже збережено. Повторіть спробу з тим самим UID — новий акаунт не створюється.</string>
+    <string name="onboarding_local_note">Дані зберігаються лише на цьому пристрої у зашифрованому сховищі. Резервних копій немає.</string>
+
+    <!-- Main -->
+    <string name="main_title">Veil</string>
+    <string name="main_empty_title">Ще немає розмов</string>
+    <string name="main_empty_body">Додайте контакт за точним псевдонімом. Перед першим повідомленням звірте відбиток ключа поза каналом.</string>
+    <string name="main_add_contact">Додати контакт</string>
+    <string name="main_settings">Налаштування</string>
+    <string name="main_no_messages">Повідомлень ще немає</string>
+    <string name="menu_refresh">Оновити</string>
+    <string name="menu_verify">Перевірити ключ</string>
+
+    <!-- Chat -->
+    <string name="chat_input_hint">Повідомлення</string>
+    <string name="chat_send">Надіслати</string>
+    <string name="chat_encrypted_note">Наскрізне шифрування Signal Protocol</string>
+    <string name="chat_verified">Ключ звірено</string>
+    <string name="chat_unverified">Ключ не звірено</string>
+    <string name="chat_status_queued">у черзі</string>
+    <string name="chat_status_sent">надіслано</string>
+    <string name="chat_status_received">отримано</string>
+    <string name="chat_too_long">Повідомлення задовге: максимум 4096 байтів UTF-8.</string>
+    <string name="chat_empty_text">Порожнє повідомлення.</string>
+    <string name="chat_failed_prefix">Не надіслано: %1$s</string>
+
+    <!-- Contact -->
+    <string name="contact_title">Контакт</string>
+    <string name="contact_lookup">Знайти</string>
+    <string name="contact_handle_label">Псевдонім контакту</string>
+    <string name="contact_not_found">Контакт не знайдено.</string>
+    <string name="contact_identity_changed">Ключ цього контакту відрізняється від збереженого. Зв\'язок заблоковано. Видаліть контакт і додайте його знову, лише якщо зміна очікувана.</string>
+    <string name="contact_fingerprint_title">Відбиток ключа</string>
+    <string name="contact_fingerprint_hint">Звірте ці 60 цифр зі співрозмовником особисто або іншим каналом. Якщо цифри не збігаються — не пишіть.</string>
+    <string name="contact_verified_checkbox">Я звірив відбиток поза цим каналом</string>
+    <string name="contact_save">Зберегти контакт</string>
+    <string name="contact_delete">Видалити контакт</string>
+    <string name="contact_delete_confirm">Видалити контакт? Історія лишиться на пристрої, але нові повідомлення потребуватимуть повторного додавання.</string>
+    <string name="contact_uid">UID</string>
+    <string name="contact_handle_at">@%1$s</string>
+    <string name="contact_identity">Ідентифікаційний ключ</string>
+    <string name="contact_saved">Контакт збережено.</string>
+    <string name="contact_copy_fingerprint">Копіювати відбиток</string>
+    <string name="contact_copied">Відбиток скопійовано.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Налаштування</string>
+    <string name="settings_account">Акаунт</string>
+    <string name="settings_handle">Псевдонім</string>
+    <string name="settings_uid">UID пристрою</string>
+    <string name="settings_server">Реле</string>
+    <string name="settings_device">Пристрій</string>
+    <string name="settings_device_value">1 (єдиний, без мультипристрою)</string>
+    <string name="settings_security">Безпека</string>
+    <string name="settings_security_body">Стан сесій і ключі зберігаються в одному зашифрованому файлі AES-GCM. Ключ шифрування — випадковий, неекспортований, у Android Keystore. Резервне копіювання й перенесення даних вимкнені. Скріншоти заблоковані (FLAG_SECURE).</string>
+    <string name="settings_limits">Обмеження цієї версії</string>
+    <string name="settings_limits_body">• Один пристрій на акаунт; мультипристрою немає.\n• Лише текст, без вкладень і груп.\n• Немає push: доставка відбувається, коли застосунок відкритий.\n• Немає відновлення акаунта чи резервної копії. Втрата пристрою = втрата акаунта.\n• Реле бачить UID, час, розміри й IP; метадані не приховані (без sealed sender).\n• Розробницький MVP без незалежного аудиту — не для чутливих даних.</string>
+    <string name="settings_crypto">Криптографія</string>
+    <string name="settings_crypto_body">Офіційна бібліотека Signal Protocol (libsignal-android 0.86.5), PQXDH з Kyber-1024, X3DH-сумісні попередні ключі. Відбитки: Signal numeric fingerprint, версія 2, 5200 ітерацій.</string>
+    <string name="settings_version">Версія застосунку</string>
+    <string name="settings_handle_at">@%1$s</string>
+    <string name="settings_version_value">Версія застосунку %1$s</string>
+    <string name="settings_status">Стан</string>
+    <string name="settings_status_ready">Готово</string>
+    <string name="settings_status_pending">Очікує реєстрації</string>
+    <string name="settings_confirm_remove">Забути акаунт на цьому пристрої? Це незворотно і не видаляє акаунт на сервері.</string>
+
+    <!-- Common -->
+    <string name="common_cancel">Скасувати</string>
+    <string name="common_close">Закрити</string>
+    <string name="common_ok">Гаразд</string>
+    <string name="common_back">Назад</string>
+    <string name="common_error">Помилка</string>
+    <string name="common_working">Виконується…</string>
+    <string name="common_retry">Повторити</string>
+    <string name="common_delete">Видалити</string>
+    <string name="privacy_overlay">Veil</string>
+
+    <!-- Fatal -->
+    <string name="fatal_title">Сховище недоступне</string>
+    <string name="fatal_body">Не вдалося відкрити зашифроване сховище. Дані не видалено. Перезапустіть застосунок; якщо помилка повторюється, не видаляйте дані застосунку.</string>
+    <string name="fatal_exit">Закрити</string>
+
+    <!-- Errors -->
+    <string name="err_url_empty">Введіть адресу релею.</string>
+    <string name="err_url_invalid">Некоректна адреса сервера.</string>
+    <string name="err_url_insecure">Дозволено лише HTTPS. HTTP приймається тільки для 10.0.2.2 та 127.0.0.1 у debug-збірці.</string>
+    <string name="err_handle">Псевдонім має містити 3–24 символи: a–z, 0–9, «_».</string>
+    <string name="err_network">Мережева помилка. Перевірте з\'єднання й повторіть.</string>
+    <string name="err_unauthorized">Сервер відхилив токен. Повторний вхід без відновлення акаунта неможливий.</string>
+    <string name="err_rate_limited">Занадто багато запитів. Спробуйте пізніше.</string>
+    <string name="err_server">Сервер повернув помилку.</string>
+    <string name="err_decoding">Неочікувана відповідь сервера.</string>
+    <string name="err_not_ready">Застосунок ще ініціалізується.</string>
+    <string name="err_no_account">Спочатку завершіть реєстрацію.</string>
+    <string name="err_no_contact">Контакт не доданий.</string>
+    <string name="err_crypto">Криптографічна помилка.</string>
+    <string name="err_identity_changed">Ключ співрозмовника змінився — повідомлення відхилено.</string>
+    <string name="err_registration_pending">Реєстрація не підтверджена. Повторіть із тим самим UID.</string>
+    <string name="err_handle_taken">Цей псевдонім уже зайнятий.</string>
+    <string name="err_conflict">Конфлікт на сервері (409).</string>
+    <string name="err_too_large">Дані завеликі для сервера.</string>
+    <string name="err_timeout">Час очікування вичерпано.</string>
+    <string name="settings_build_legal">Veil %1$s · development\nlibsignal 0.106.0 · © Signal Messenger LLC та учасники\nAGPL-3.0-only · без гарантій\nВихідні коди: Veil-0.1.0-source.zip, наданий зі збіркою. Натисніть, щоб прочитати ліцензію.</string>
+    <string name="settings_license_fallback">Ліцензія доступна у вихідному архіві: licenses/AGPL-3.0.txt.</string>
+</resources>
