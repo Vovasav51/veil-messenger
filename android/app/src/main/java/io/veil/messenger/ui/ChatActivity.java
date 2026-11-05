@@ -6,12 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +30,9 @@ public final class ChatActivity extends BaseActivity implements AppCore.Listener
     private String uid;
     private MaterialToolbar toolbar;
     private ListView list;
+    private View empty;
     private EditText input;
-    private ImageButton sendButton;
+    private MaterialButton sendButton;
     private MessageAdapter adapter;
     private int lastCount = -1;
     private boolean sending;
@@ -50,12 +51,17 @@ public final class ChatActivity extends BaseActivity implements AppCore.Listener
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(view -> finish());
+        Insets.top(toolbar);
 
         list = findViewById(R.id.list);
+        empty = findViewById(R.id.empty);
         input = findViewById(R.id.input);
         sendButton = findViewById(R.id.sendButton);
         adapter = new MessageAdapter(getLayoutInflater());
         list.setAdapter(adapter);
+
+        // Keeps the composer above the keyboard and above the navigation bar.
+        Insets.bottomFollowsKeyboard(findViewById(R.id.composer));
 
         sendButton.setOnClickListener(view -> send());
     }
@@ -130,10 +136,14 @@ public final class ChatActivity extends BaseActivity implements AppCore.Listener
         toolbar.setSubtitle(contact.verified
                 ? getString(R.string.chat_verified)
                 : getString(R.string.chat_unverified));
+        toolbar.setSubtitleTextColor(contact.verified
+                ? themeValue(R.attr.veilStatusOk)
+                : themeValue(R.attr.veilStatusPending));
 
         List<ChatMessage> messages = new ArrayList<>(state.messagesFor(uid));
         adapter.setData(messages, state.sendFailures);
         sendButton.setEnabled(!sending);
+        empty.setVisibility(adapter.getCount() == 0 ? View.VISIBLE : View.GONE);
         if (adapter.getCount() != lastCount) {
             lastCount = adapter.getCount();
             if (lastCount > 0) {

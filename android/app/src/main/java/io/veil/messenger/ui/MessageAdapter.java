@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.color.MaterialColors;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +18,11 @@ import java.util.Map;
 import io.veil.messenger.R;
 import io.veil.messenger.core.model.ChatMessage;
 
-/** Chat bubbles. Incoming text is plain text (never HTML/markdown). */
+/**
+ * Chat bubbles. Incoming text is plain text (never HTML/markdown). Incoming and
+ * outgoing bubbles differ in shape, background and text colour, both resolved
+ * from the theme so the dark variant stays readable.
+ */
 final class MessageAdapter extends BaseAdapter {
 
     private final LayoutInflater inflater;
@@ -65,20 +71,25 @@ final class MessageAdapter extends BaseAdapter {
         holder.body.setText(message.text);
         holder.bubble.setBackgroundResource(message.outgoing
                 ? R.drawable.bg_bubble_out : R.drawable.bg_bubble_in);
+        int bubbleText = message.outgoing
+                ? R.attr.veilBubbleOutText
+                : R.attr.veilBubbleInText;
+        holder.body.setTextColor(MaterialColors.getColor(holder.body, bubbleText));
         ((LinearLayout) view).setGravity(message.outgoing ? Gravity.END : Gravity.START);
 
         String meta = Formatting.time(message.createdAtMs);
         String failure = failures.get(message.id);
         if (failure != null) {
             meta = meta + " · " + failure;
-            holder.meta.setTextColor(holder.meta.getContext().getColor(R.color.veil_danger));
+            holder.meta.setTextColor(MaterialColors.getColor(holder.meta,
+                    com.google.android.material.R.attr.colorError));
         } else {
             String status = Formatting.messageStatus(message);
             if (!status.isEmpty()) {
                 meta = meta + " · " + status;
             }
-            holder.meta.setTextColor(
-                    holder.meta.getContext().getColor(R.color.veil_text_muted));
+            holder.meta.setTextColor(MaterialColors.getColor(holder.meta,
+                    com.google.android.material.R.attr.colorOnSurfaceVariant));
         }
         holder.meta.setText(meta);
         return view;

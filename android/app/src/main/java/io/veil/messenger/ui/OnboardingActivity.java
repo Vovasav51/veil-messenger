@@ -40,6 +40,9 @@ public final class OnboardingActivity extends BaseActivity implements AppCore.Li
         progress = findViewById(R.id.progress);
         pendingCard = findViewById(R.id.pendingCard);
 
+        // No toolbar on this screen: the scroll content carries both insets.
+        Insets.topAndBottom(findViewById(R.id.scroll));
+
         createButton.setOnClickListener(view -> submit());
         core().start(this);
     }

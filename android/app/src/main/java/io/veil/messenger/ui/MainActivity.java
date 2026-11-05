@@ -39,9 +39,11 @@ public final class MainActivity extends BaseActivity implements AppCore.Listener
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Insets.top(toolbar);
 
         list = findViewById(R.id.list);
         empty = findViewById(R.id.empty);
+        Insets.bottom(findViewById(R.id.content));
         adapter = new ConversationAdapter(getLayoutInflater());
         list.setAdapter(adapter);
 
@@ -60,8 +62,10 @@ public final class MainActivity extends BaseActivity implements AppCore.Listener
         });
 
         FloatingActionButton add = findViewById(R.id.addButton);
-        add.setOnClickListener(view ->
-                startActivity(new Intent(this, ContactActivity.class)));
+        View.OnClickListener addContact =
+                view -> startActivity(new Intent(this, ContactActivity.class));
+        add.setOnClickListener(addContact);
+        findViewById(R.id.emptyAddButton).setOnClickListener(addContact);
     }
 
     @Override

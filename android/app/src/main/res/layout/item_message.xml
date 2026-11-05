@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="14dp"
-    android:paddingVertical="3dp">
+    android:paddingStart="16dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="4dp">
 
     <LinearLayout
         android:id="@+id/bubble"
@@ -13,16 +15,18 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_bubble_in"
         android:orientation="vertical"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="9dp">
+        android:paddingStart="14dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="286dp"
+            android:maxWidth="@dimen/bubble_max_width"
             android:textAppearance="@style/TextAppearance.Veil.Body"
-            android:textColor="@color/veil_text"
+            android:textColor="?attr/veilBubbleInText"
             android:textIsSelectable="true"
             tools:text="Текст повідомлення" />
     </LinearLayout>
@@ -31,9 +35,9 @@
         android:id="@+id/meta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:textAppearance="@style/TextAppearance.Veil.Body"
-        android:textColor="?attr/colorOnSurfaceVariant"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="4dp"
+        android:textAppearance="@style/TextAppearance.Veil.Caption"
         android:textSize="11sp"
-        tools:text="12:40" />
+        tools:text="12:40 · надіслано" />
 </LinearLayout>

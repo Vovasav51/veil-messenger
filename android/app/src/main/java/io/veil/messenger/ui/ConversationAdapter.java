@@ -8,13 +8,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.veil.messenger.R;
 import io.veil.messenger.core.VaultState;
 import io.veil.messenger.core.model.ChatMessage;
 import io.veil.messenger.core.model.Contact;
 
-/** 1:1 conversation list: contact handle, last message preview and time. */
+/** 1:1 conversation list: avatar initial, handle, last message preview, time. */
 final class ConversationAdapter extends BaseAdapter {
 
     private final LayoutInflater inflater;
@@ -57,6 +58,7 @@ final class ConversationAdapter extends BaseAdapter {
         Holder holder = (Holder) view.getTag();
         Contact contact = getItem(position);
         ChatMessage last = state.lastMessageFor(contact.uid);
+        holder.avatar.setText(initial(contact));
         holder.name.setText(Formatting.displayName(contact));
         holder.snippet.setText(last == null
                 ? holder.snippet.getContext().getString(R.string.main_no_messages)
@@ -65,12 +67,26 @@ final class ConversationAdapter extends BaseAdapter {
         return view;
     }
 
+    /** First character of the handle, without the leading "@". */
+    private static String initial(Contact contact) {
+        String handle = contact == null || contact.handle == null ? "" : contact.handle.trim();
+        while (handle.startsWith("@")) {
+            handle = handle.substring(1);
+        }
+        if (handle.isEmpty()) {
+            return "?";
+        }
+        return handle.substring(0, 1).toUpperCase(Locale.getDefault());
+    }
+
     private static final class Holder {
+        final TextView avatar;
         final TextView name;
         final TextView snippet;
         final TextView time;
 
         Holder(View view) {
+            avatar = view.findViewById(R.id.avatar);
             name = view.findViewById(R.id.name);
             snippet = view.findViewById(R.id.snippet);
             time = view.findViewById(R.id.time);

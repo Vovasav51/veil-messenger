@@ -7,4 +7,12 @@
     <dimen name="space_xl">32dp</dimen>
     <dimen name="corner_m">14dp</dimen>
     <dimen name="corner_l">20dp</dimen>
+
+    <!-- Screen rhythm: one horizontal gutter, one card padding, everywhere. -->
+    <dimen name="screen_gutter">20dp</dimen>
+    <dimen name="card_padding">20dp</dimen>
+    <dimen name="avatar_size">44dp</dimen>
+    <dimen name="badge_size">76dp</dimen>
+    <dimen name="bubble_max_width">288dp</dimen>
+    <dimen name="button_height">52dp</dimen>
 </resources>

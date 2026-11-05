@@ -18,6 +18,7 @@
 
     <!-- Main -->
     <string name="main_title">Veil</string>
+    <string name="main_subtitle">Наскрізне шифрування</string>
     <string name="main_empty_title">Ще немає розмов</string>
     <string name="main_empty_body">Додайте контакт за точним псевдонімом. Перед першим повідомленням звірте відбиток ключа поза каналом.</string>
     <string name="main_add_contact">Додати контакт</string>
@@ -28,6 +29,8 @@
 
     <!-- Chat -->
     <string name="chat_input_hint">Повідомлення</string>
+    <string name="chat_empty_title">Розмова порожня</string>
+    <string name="chat_empty_body">Напишіть перше повідомлення. Воно шифрується на цьому пристрої, і реле не бачить його вмісту.</string>
     <string name="chat_send">Надіслати</string>
     <string name="chat_encrypted_note">Наскрізне шифрування Signal Protocol</string>
     <string name="chat_verified">Ключ звірено</string>
@@ -41,6 +44,7 @@
 
     <!-- Contact -->
     <string name="contact_title">Контакт</string>
+    <string name="contact_intro">Точний пошук за псевдонімом. Перед першим повідомленням звірте відбиток ключа особисто або іншим каналом.</string>
     <string name="contact_lookup">Знайти</string>
     <string name="contact_handle_label">Псевдонім контакту</string>
     <string name="contact_not_found">Контакт не знайдено.</string>

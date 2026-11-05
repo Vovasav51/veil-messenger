@@ -9,81 +9,104 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?android:colorBackground"
+        android:minHeight="?attr/actionBarSize"
         app:navigationIcon="@drawable/ic_back"
         app:title="@string/contact_title"
         app:titleTextColor="?attr/colorOnSurface" />
 
     <ScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingStart="@dimen/screen_gutter"
+            android:paddingTop="8dp"
+            android:paddingEnd="@dimen/screen_gutter"
+            android:paddingBottom="32dp">
 
-            <LinearLayout
-                android:id="@+id/lookupSection"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="@string/contact_intro"
+                android:textAppearance="@style/TextAppearance.Veil.Body"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            <!-- The lookup card itself is the section that is hidden once the
+                 contact is resolved (or opened in existing-contact mode). -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/lookupSection"
+                style="@style/Widget.Veil.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/contact_handle_label"
-                    app:helperText="@string/onboarding_handle_helper"
-                    app:helperTextEnabled="true">
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/handleInput"
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Veil.TextInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:autofillHints="username"
-                        android:inputType="text"
-                        android:maxLength="25"
-                        android:maxLines="1" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:hint="@string/contact_handle_label"
+                        app:helperText="@string/onboarding_handle_helper"
+                        app:helperTextEnabled="true">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/lookupButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:text="@string/contact_lookup" />
-            </LinearLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/handleInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="username"
+                            android:inputType="text"
+                            android:maxLength="25"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/lookupButton"
+                        style="@style/Widget.Veil.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/contact_lookup" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/resultCard"
                 style="@style/Widget.Veil.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="20dp"
                 android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="@dimen/card_padding">
 
                     <TextView
                         android:id="@+id/contactHandle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Veil.Body"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.Veil.Headline" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="16dp"
                         android:text="@string/contact_uid"
                         android:textAppearance="@style/TextAppearance.Veil.Label" />
 
@@ -91,56 +114,64 @@
                         android:id="@+id/contactUid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="monospace"
-                        android:textAppearance="@style/TextAppearance.Veil.Body"
-                        android:textSize="12sp" />
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.Veil.Mono" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginTop="20dp"
                         android:text="@string/contact_fingerprint_title"
                         android:textAppearance="@style/TextAppearance.Veil.Label" />
 
-                    <TextView
-                        android:id="@+id/fingerprint"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:textAppearance="@style/TextAppearance.Veil.Fingerprint"
-                        android:textIsSelectable="true" />
-
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:lineSpacingMultiplier="1.2"
-                        android:text="@string/contact_fingerprint_hint"
-                        android:textAppearance="@style/TextAppearance.Veil.Body"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp" />
+                        android:background="@drawable/bg_panel"
+                        android:orientation="vertical"
+                        android:padding="14dp">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/copyButton"
-                        style="@style/Widget.Veil.Button.Text"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/fingerprint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Veil.Fingerprint"
+                            android:textIsSelectable="true" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/copyButton"
+                            style="@style/Widget.Veil.Button.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="8dp"
+                            android:text="@string/contact_copy_fingerprint"
+                            app:icon="@drawable/ic_copy"
+                            app:iconGravity="textStart"
+                            app:iconSize="18dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:minHeight="40dp"
-                        android:text="@string/contact_copy_fingerprint" />
+                        android:layout_marginTop="12dp"
+                        android:text="@string/contact_fingerprint_hint"
+                        android:textAppearance="@style/TextAppearance.Veil.Caption" />
 
                     <CheckBox
                         android:id="@+id/verifiedCheck"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
+                        android:layout_marginTop="12dp"
                         android:minHeight="48dp"
                         android:text="@string/contact_verified_checkbox"
                         android:textAppearance="@style/TextAppearance.Veil.Body" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/saveButton"
+                        style="@style/Widget.Veil.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
@@ -150,12 +181,11 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.Veil.Button.Outlined.Danger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/contact_delete"
-                android:textColor="@color/veil_danger"
                 android:visibility="gone" />
 
             <TextView
@@ -164,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:textAppearance="@style/TextAppearance.Veil.Body"
-                android:textColor="@color/veil_danger"
+                android:textColor="?attr/colorError"
                 android:visibility="gone" />
         </LinearLayout>
     </ScrollView>

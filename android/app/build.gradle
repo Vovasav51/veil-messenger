@@ -111,6 +111,11 @@ dependencies {
     implementation 'org.signal:libsignal-android:0.106.0'
 
     implementation 'androidx.appcompat:appcompat:1.7.0'
+    // WindowInsetsCompat and ViewCompat, used to translate the edge-to-edge
+    // window insets (status bar, navigation bar, keyboard) into padding.
+    // Already on the classpath transitively via appcompat; pinned explicitly
+    // because the UI depends on it directly.
+    implementation 'androidx.core:core:1.13.0'
     // Manifest explicitly customizes this provider to disable downloadable emoji fonts.
     implementation 'androidx.startup:startup-runtime:1.2.0'
     implementation 'com.google.android.material:material:1.12.0'

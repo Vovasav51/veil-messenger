@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Semantic colours resolved from the current theme, so that layouts,
+         drawables and adapters never hard-code a light-only value. Both
+         Theme.Veil definitions (values and values-night) must provide them. -->
+
+    <!-- Chat bubbles -->
+    <attr name="veilBubbleIn" format="color" />
+    <attr name="veilBubbleOut" format="color" />
+    <attr name="veilBubbleInText" format="color" />
+    <attr name="veilBubbleOutText" format="color" />
+
+    <!-- Verification state: key compared vs. not compared yet -->
+    <attr name="veilStatusOk" format="color" />
+    <attr name="veilStatusPending" format="color" />
+</resources>

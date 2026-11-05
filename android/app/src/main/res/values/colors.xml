@@ -12,7 +12,11 @@
     <color name="veil_text_muted">#5B6070</color>
     <color name="veil_outline">#DDDBD4</color>
     <color name="veil_danger">#B3261E</color>
+    <color name="veil_ok">#1E7A46</color>
+    <color name="veil_warn">#9A5B00</color>
     <color name="veil_bubble_out">#E4E7FF</color>
     <color name="veil_bubble_in">#FFFFFF</color>
+    <color name="veil_bubble_out_text">#1A2150</color>
+    <color name="veil_bubble_in_text">#14161C</color>
     <color name="veil_shield">#F2EFE8</color>
 </resources>

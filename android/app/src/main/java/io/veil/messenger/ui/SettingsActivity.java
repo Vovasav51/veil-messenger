@@ -1,8 +1,11 @@
 package io.veil.messenger.ui;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -20,6 +23,7 @@ public final class SettingsActivity extends BaseActivity implements AppCore.List
     private TextView accountServer;
     private TextView statusValue;
     private TextView versionValue;
+    private View statusDot;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,11 +32,14 @@ public final class SettingsActivity extends BaseActivity implements AppCore.List
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(view -> finish());
+        Insets.top(toolbar);
+        Insets.bottom(findViewById(R.id.scroll));
 
         accountHandle = findViewById(R.id.accountHandle);
         accountUid = findViewById(R.id.accountUid);
         accountServer = findViewById(R.id.accountServer);
         statusValue = findViewById(R.id.statusValue);
+        statusDot = findViewById(R.id.statusDot);
         versionValue = findViewById(R.id.versionValue);
         versionValue.setText(getString(R.string.settings_build_legal, BuildConfig.VERSION_NAME));
         versionValue.setOnClickListener(view -> showLicense());
@@ -78,14 +85,25 @@ public final class SettingsActivity extends BaseActivity implements AppCore.List
             accountHandle.setText(getString(R.string.settings_handle_at, state.account.handle));
             accountUid.setText(state.account.uid);
             accountServer.setText(state.account.serverUrl);
-            statusValue.setText(R.string.settings_status_ready);
+            setStatus(getString(R.string.settings_status_ready), R.attr.veilStatusOk);
         } else {
             accountHandle.setText("—");
             accountUid.setText("—");
             accountServer.setText(state.pending == null ? "—" : state.pending.serverUrl);
-            statusValue.setText(state.pending == null
-                    ? "—" : getString(R.string.settings_status_pending));
+            if (state.pending == null) {
+                setStatus("—", com.google.android.material.R.attr.colorOnSurfaceVariant);
+            } else {
+                setStatus(getString(R.string.settings_status_pending), R.attr.veilStatusPending);
+            }
         }
+    }
+
+    /** Status line: a tinted dot plus text, colour taken from the theme. */
+    private void setStatus(String text, @AttrRes int colorAttr) {
+        int color = themeValue(colorAttr);
+        statusValue.setText(text);
+        statusValue.setTextColor(color);
+        statusDot.setBackgroundTintList(ColorStateList.valueOf(color));
     }
 
     private void showLicense() {
@@ -95,8 +113,12 @@ public final class SettingsActivity extends BaseActivity implements AppCore.List
             int length;
             while ((length = input.read(bytes)) != -1) buffer.write(bytes, 0, length);
             TextView text = new TextView(this);
-            text.setPadding(24, 12, 24, 12);
+            int pad = Math.round(20 * getResources().getDisplayMetrics().density);
+            text.setPadding(pad, pad, pad, pad);
             text.setText(new String(buffer.toByteArray(), java.nio.charset.StandardCharsets.UTF_8));
+            text.setTextAppearance(R.style.TextAppearance_Veil_Caption);
+            text.setTextColor(themeValue(com.google.android.material.R.attr.colorOnSurface));
+            text.setLineSpacing(0f, 1.3f);
             text.setTextIsSelectable(true);
             android.widget.ScrollView scroll = new android.widget.ScrollView(this);
             scroll.addView(text);

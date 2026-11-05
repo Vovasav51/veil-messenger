@@ -1,41 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:minHeight="72dp"
-    android:paddingHorizontal="20dp"
-    android:paddingVertical="14dp">
+    android:minHeight="76dp"
+    android:paddingStart="16dp"
+    android:paddingTop="14dp"
+    android:paddingEnd="16dp">
+
+    <TextView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/bg_avatar"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Veil.Title"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        tools:text="O" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@id/avatar"
         android:layout_toStartOf="@id/time"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Veil.Body"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textAppearance="@style/TextAppearance.Veil.Title"
+        tools:text="@olena_k" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:paddingStart="8dp"
-        android:textAppearance="@style/TextAppearance.Veil.Body"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="11sp" />
+        android:layout_alignTop="@id/name"
+        android:layout_marginTop="3dp"
+        android:textAppearance="@style/TextAppearance.Veil.Caption"
+        tools:text="12:40" />
 
     <TextView
         android:id="@+id/snippet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="3dp"
+        android:layout_toEndOf="@id/avatar"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Veil.Body"
-        android:textColor="?attr/colorOnSurfaceVariant" />
+        android:textColor="?attr/colorOnSurfaceVariant"
+        tools:text="Повідомлень ще немає" />
+
+    <!-- Hairline inset to the text column, so the avatar stays visually free. -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/snippet"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="14dp"
+        android:background="?attr/colorOutline" />
 </RelativeLayout>

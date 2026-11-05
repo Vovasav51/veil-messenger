@@ -6,16 +6,21 @@
     android:background="?android:colorBackground"
     android:orientation="vertical">
 
+    <!-- wrap_content + minHeight: the status-bar inset is added as top padding
+         (see Insets.top) and must grow the bar, not clip the title. -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?android:colorBackground"
-        android:elevation="0dp"
+        android:minHeight="?attr/actionBarSize"
+        app:subtitle="@string/main_subtitle"
+        app:subtitleTextAppearance="@style/TextAppearance.Veil.Caption"
         app:title="@string/main_title"
         app:titleTextColor="?attr/colorOnSurface" />
 
     <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -26,6 +31,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:divider="@null"
+            android:paddingTop="4dp"
             android:paddingBottom="96dp"
             android:scrollbars="none" />
 
@@ -33,35 +39,56 @@
             android:id="@+id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?android:colorBackground"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingHorizontal="40dp">
+            android:paddingStart="32dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="64dp">
 
-            <ImageView
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_veil_mark"
-                app:tint="?attr/colorOnSurfaceVariant" />
+            <FrameLayout
+                android:layout_width="@dimen/badge_size"
+                android:layout_height="@dimen/badge_size"
+                android:background="@drawable/bg_icon_badge">
+
+                <ImageView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_veil_mark"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/main_empty_title"
-                android:textAppearance="@style/TextAppearance.Veil.Body"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.Veil.Headline" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:lineSpacingMultiplier="1.25"
+                android:maxWidth="300dp"
                 android:text="@string/main_empty_body"
                 android:textAppearance="@style/TextAppearance.Veil.Body"
                 android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/emptyAddButton"
+                style="@style/Widget.Veil.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/main_add_contact"
+                app:icon="@drawable/ic_add"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="?attr/colorPrimary" />
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

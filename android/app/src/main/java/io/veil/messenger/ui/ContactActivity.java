@@ -53,6 +53,8 @@ public final class ContactActivity extends BaseActivity implements AppCore.Liste
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(view -> finish());
+        Insets.top(toolbar);
+        Insets.bottom(findViewById(R.id.scroll));
 
         lookupSection = findViewById(R.id.lookupSection);
         handleInput = findViewById(R.id.handleInput);
