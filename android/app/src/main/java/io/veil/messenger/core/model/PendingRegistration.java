@@ -27,6 +27,10 @@ public final class PendingRegistration {
         return new PendingRegistration(uid, value, serverUrl, createdAtMs);
     }
 
+    public PendingRegistration withServerUrl(String value) {
+        return new PendingRegistration(uid, handle, value, createdAtMs);
+    }
+
     public JSONObject toJson() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("uid", uid);

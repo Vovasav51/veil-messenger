@@ -89,10 +89,16 @@ public final class OnboardingActivity extends BaseActivity implements AppCore.Li
         if (!prefilled && core().isReady()) {
             PendingRegistration pending = state.pending;
             if (pending != null) {
-                serverInput.setText(pending.serverUrl);
                 handleInput.setText(pending.handle);
                 pendingCard.setVisibility(View.VISIBLE);
                 createButton.setText(R.string.onboarding_retry);
+            }
+            if (serverInput.getText() == null
+                    || serverInput.getText().toString().trim().isEmpty()
+                    || serverInput.getText().toString().trim().equals("https://")) {
+                // Always suggest the current baked-in relay address: a stale
+                // pending URL (old tunnel name) must not be silently retried.
+                serverInput.setText(io.veil.messenger.BuildConfig.DEFAULT_RELAY_URL);
             }
             prefilled = true;
         }

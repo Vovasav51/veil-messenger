@@ -318,10 +318,15 @@ public final class AppCore {
                 }
 
                 PendingRegistration pending = published.pending;
-                if (pending != null && !pending.serverUrl.equals(url.toString())) {
+                if (pending != null && !pending.serverUrl.equals(url.toString())
+                        && published.account != null) {
+                    // An existing account must keep talking to its own relay.
                     throw new UiError("Незавершена реєстрація прив'язана до іншого сервера. "
                             + "Вкажіть ту саму адресу релею.");
                 }
+                // Without an account the server never saw this UID, so a
+                // corrected relay address (typo fix, new tunnel URL) is safe
+                // to adopt; the same identity and UID are kept.
 
                 syncHalted = false;
                 final PendingRegistration prepared = vault.transaction(new Vault.Tx<PendingRegistration>() {
@@ -334,7 +339,7 @@ public final class AppCore {
                             current = new PendingRegistration(Uuid7.create(), handle,
                                     url.toString(), System.currentTimeMillis());
                         } else {
-                            current = current.withHandle(handle);
+                            current = current.withHandle(handle).withServerUrl(url.toString());
                         }
                         state.pending = current;
                         return current;
